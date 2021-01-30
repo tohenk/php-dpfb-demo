@@ -1,0 +1,14 @@
+{
+    "js-cookie": {
+        "version": "2.2.1",
+        "url": "https://cdnjs.cloudflare.com/ajax/libs/js-cookie/%VER%/%NAME%"
+    },
+    "notifyjs": {
+        "version": "0.4.2",
+        "url": "https://cdnjs.cloudflare.com/ajax/libs/notify/%VER%/%NAME%"
+    },
+    "socket.io": {
+        "version": "3.1.0",
+        "url": "https://cdnjs.cloudflare.com/ajax/libs/socket.io/%VER%/%NAME%"
+    }
+}

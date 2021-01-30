@@ -1,0 +1,3 @@
+[submodule "www/cdn"]
+	path = www/cdn
+	url = https://github.com/tohenk/ntjs-web-assets.git
