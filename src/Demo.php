@@ -155,6 +155,18 @@ class Demo
         return substr(sha1(uniqid(mt_rand(), true)), 0, 8);
     }
 
+    protected function getRoute()
+    {
+        $route = isset($_SERVER['SCRIPT_URL']) ? $_SERVER['SCRIPT_URL'] : $_SERVER['REQUEST_URI'];
+        if ($scriptName = $_SERVER['SCRIPT_NAME']) {
+            $scriptPath = dirname($scriptName);
+            if (0 === strpos($route, $scriptPath)) {
+                $route = substr($route, strlen($scriptPath));
+            }
+        }
+        return $route;
+    }
+
     protected function executeIndex()
     {
         $content = $this->useView('demo.php', ['uri' => $_SERVER['REQUEST_URI']]);
@@ -234,7 +246,7 @@ class Demo
      */
     public function run()
     {
-        $route = isset($_SERVER['PATH_INFO']) ? $_SERVER['PATH_INFO'] : '/';
+        $route = $this->getRoute();
         $vars = [];
         if (isset($_SERVER['QUERY_STRING']) && strlen($_SERVER['QUERY_STRING'])) {
             parse_str($_SERVER['QUERY_STRING'], $vars);
