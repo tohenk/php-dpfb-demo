@@ -164,6 +164,9 @@ class Demo
                 $route = substr($route, strlen($scriptPath));
             }
         }
+        if (false !== ($p = strpos($route, '?'))) {
+            $route = substr($route, 0, $p);
+        }
         return $route;
     }
 
