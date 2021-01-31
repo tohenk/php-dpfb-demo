@@ -88,12 +88,7 @@
     ->includeScript()
     ->add(<<<EOF
 var cookie = 'fingerprints';
-var fingers = Cookies.get(cookie);
-if (fingers) {
-    fingers = JSON.parse(fingers);
-} else {
-    fingers = {};
-}
+var fingers = {};
 
 // update ui when fingerprint connected or disconnected
 $(document).on('fpconnect', function(e) {
@@ -142,12 +137,26 @@ $.fpUpdate = function() {
     }
 }
 
+$.fpGetFromCookie = function() {
+    var fps = Cookies.get(cookie);
+    if (fps) {
+        fingers = JSON.parse(fps);
+    }
+}
+
+$.fpSaveToCookie = function(update) {
+    Cookies.set(cookie, fingers);
+    if (update) $.fpUpdate();
+}
+
 // clear registered templates
 $.fpClear = function() {
     $.ntdlg.confirm('my-fp-msg', '$clear', '$clear_message', $.ntdlg.ICON_QUESTION, function() {
         $.post('$fp_clear_url')
             .done(function(json) {
                 if (json.success) {
+                    fingers = {};
+                    $.fpSaveToCookie(true);
                     $.ntdlg.message('my-fp-msg', '$clear', '$clear_success', $.ntdlg.ICON_SUCCESS);
                 } else {
                     $.ntdlg.message('my-fp-msg', '$clear', '$clear_unsuccess', $.ntdlg.ICON_ERROR);
@@ -220,8 +229,7 @@ $.fp.init(function(status, data) {
         }).done(function(json) {
             if (json.success) {
                 fingers[$.fp.fingerIndex] = {id: json.id, data: data};
-                Cookies.set(cookie, fingers);
-                $.fpUpdate();
+                $.fpSaveToCookie(true);
                 var mask = $.fp.includeFinger($.fp.fingerMask, $.fp.fingerIndex);
                 var nextFinger = $.fp.getNextUnenrolledFinger(mask);
                 if (nextFinger > 0) {
@@ -248,12 +256,21 @@ $.fp.init(function(status, data) {
                 .done(function(json) {
                     if (json.success) {
                         if (json.deleted) {
+                            console.log('Deleted: %s', JSON.stringify(json.deleted));
                             Object.keys(fingers).forEach(function(finger) {
                                 if (json.deleted.indexOf(fingers[finger].id) >= 0) {
                                     delete fingers[finger];
                                 }
                             });
-                            $.fpUpdate();
+                            $.fpSaveToCookie(true);
+                        } else {
+                            console.log('No fingers deleted, assume as not registered!');
+                            data.forEach(function(finger) {
+                                if (fingers[finger]) {
+                                    delete fingers[finger];
+                                }
+                            });
+                            $.fpSaveToCookie(true);
                         }
                         $.ntdlg.message('my-fp-msg', '$unenroll', '$unenroll_success', $.ntdlg.ICON_SUCCESS);
                     } else {
@@ -265,5 +282,6 @@ $.fp.init(function(status, data) {
         break;
     }
 });
+$.fpGetFromCookie();
 EOF
     ) ?>
