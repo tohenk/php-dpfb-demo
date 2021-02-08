@@ -1,17 +1,12 @@
 {
-    "minimum-stability": "dev",
     "require": {
-        "ntlab/ntjs": "dev-master",
+        "ntlab/ntjs": "^1.0.1",
         "wisembly/elephant.io": "dev-master"
     },
     "repositories": {
         "wisembly-elephant.io": {
             "type": "vcs",
             "url": "https://github.com/tohenk/elephant.io.git"
-        },
-        "php-ntjs": {
-            "type": "vcs",
-            "url": "https://github.com/tohenk/php-ntjs.git"
         }
     }
 }
