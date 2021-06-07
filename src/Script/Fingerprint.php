@@ -99,7 +99,7 @@ $.define('fp', {
           { index: 10, name: '$finger_litle', fmt: '$left_finger_format' }
     },
     fingerTmpl: {
-        enroll: '<a href="#" class="btn btn-outline-primary btn-sm mb-1" data-index="%INDEX%" role="button"><span class="fas fa-fingerprint"></span> %NAME%</a>',
+        enroll: '<a href="#" class="btn btn-outline-primary btn-sm mb-1" data-index="%INDEX%" role="button"><span class="bi-hand-index"></span> %NAME%</a>',
         unenroll:
             '<div class="form-check custom-control custom-checkbox">' +
               '<input type="checkbox" class="custom-control-input" id="finger-check-%INDEX%" data-index="%INDEX%"/>' +
@@ -207,7 +207,7 @@ $.define('fp', {
                 '<div class="finger-op">' +
                   '<p class="finger-op-help mb-3"></p>' +
                   '<div class="d-flex align-items-center pb-3 px-4">' +
-                    '<div class="icon mr-3"><i class="fas fa-fingerprint fa-fw fa-3x"></i></div>' +
+                    '<div class="icon me-3"><i class="bi-hand-index fs-2"></i></div>' +
                     '<div class="msg"></div>' +
                   '</div>' +
                 '</div>';
@@ -331,7 +331,7 @@ $.define('fp', {
             var content =
                 '<div class="finger-op">' +
                   '<div class="d-flex align-items-center pb-3 px-4">' +
-                    '<div class="icon mr-3"><i class="fas fa-fingerprint fa-fw fa-3x"></i></div>' +
+                    '<div class="icon me-3"><i class="bi-hand-index fs-2"></i></div>' +
                     '<div class="msg"></div>' +
                   '</div>' +
                 '</div>';

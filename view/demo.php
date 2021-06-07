@@ -1,27 +1,27 @@
-<?php create_script('Bootstrap')->includeScript() ?>
+<?php create_script('Bootstrap')
+    ->includeDependency('BootstrapIcons')
+    ->includeScript() ?>
 <?php use_stylesheet('css/demo.css') ?>
 <nav class="navbar navbar-expand-md navbar-dark fixed-top bg-dark">
-  <a class="navbar-brand" href="https://ntlab.id/demo/dpfb-demo">DPFB Demo</a>
-  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarsDemo" aria-controls="navbarsDemo" aria-expanded="false" aria-label="Toggle navigation">
-    <span class="navbar-toggler-icon"></span>
-  </button>
-
-  <div class="collapse navbar-collapse" id="navbarsDemo">
-    <ul class="navbar-nav mr-auto">
-    </ul>
-    <ul class="navbar-nav pull-right">
-      <li class="nav-item"><a class="nav-link" href="https://github.com/tohenk/php-dpfb-demo">Source Code</a></li>
-      <li class="nav-item"><a class="nav-link" href="https://github.com/tohenk/node-dpfb"><span class="fab fa-github"></span></a></li>
-    </ul>
+  <div class="container">
+    <a class="navbar-brand" href="https://ntlab.id/demo/dpfb-demo">DPFB Demo</a>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarsDemo" aria-controls="navbarsDemo" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarsDemo">
+      <ul class="navbar-nav me-auto"></ul>
+      <ul class="navbar-nav">
+        <li class="nav-item"><a class="nav-link" href="https://github.com/tohenk/php-dpfb-demo">Source Code</a></li>
+        <li class="nav-item"><a class="nav-link" href="https://github.com/tohenk/node-dpfb"><span class="bi-github"></span></a></li>
+      </ul>
+    </div>
   </div>
 </nav>
-
 <main role="main">
-
   <!-- Main jumbotron for a primary marketing message or call to action -->
   <div class="jumbotron">
     <div class="container">
-      <h1 class="display-3">Digital Persona Fingerprint Bridge Demo</h1>
+      <h1 class="display-3 my-5">Digital Persona Fingerprint Bridge Demo</h1>
       <p class="lead">This demo shows you how to integrate <code>NODE-DPFB</code> into your PHP application. You must have already a Digital Persona fingerprint reader configured to allow this demo to work properly.</p>
       <p class="lead">The DPFP app can be downloaded from <a href="https://github.com/tohenk/node-dpfb/releases">Github</a>. You also need to run the server portion of the App to be able to enroll and identify finger. Get the server from <a href="https://github.com/tohenk/node-dpfb">here</a>, then issue: <code>npm run fpserver</code>.</p>
       <div class="alert alert-warning" role="alert">
@@ -29,7 +29,6 @@
       </div>
     </div>
   </div>
-
   <div class="container">
     <!-- Example row of columns -->
     <div class="row">
@@ -38,33 +37,27 @@
         <p class="connected d-none"><span class="text-success">Cool!</span> <code>Digital Persona Fingerprint Bridge</code> is already running.</p>
         <p class="disconnected"><code>Digital Persona Fingerprint Bridge</code> is not running. Please run DPFB app on your local computer to start!</p>
         <p>
-          <a class="btn btn-danger btn-lg d-none btn-clear" href="#" role="button"><span class="fas fa-fingerprint"></span> Clear</a>
+          <a class="btn btn-danger btn-lg d-none btn-clear" href="#" role="button"><span class="bi-hand-index"></span> Clear</a>
         </p>
       </div>
       <div class="col-md-4 enroll">
         <h2>Enrollment</h2>
         <p>To start enrollment, use the button below. You need to run the DPFB app if it is not visible!</p>
         <p>
-          <a class="btn btn-success btn-lg d-none btn-enroll" href="#" role="button"><span class="fas fa-fingerprint"></span> Enroll</a>
-          <a class="btn btn-success btn-lg d-none btn-unenroll" href="#" role="button"><span class="fas fa-fingerprint"></span> Unenroll</a>
+          <a class="btn btn-success btn-lg d-none btn-enroll" href="#" role="button"><span class="bi-hand-index"></span> Enroll</a>
+          <a class="btn btn-success btn-lg d-none btn-unenroll" href="#" role="button"><span class="bi-hand-index"></span> Unenroll</a>
         </p>
       </div>
       <div class="col-md-4 indentification">
         <h2>Identification</h2>
         <p>To start identification, use the button below. You need to run the DPFB app if it is not visible and you have already enrolled!</p>
-        <p><a class="btn btn-primary btn-lg d-none btn-identify" href="#" role="button"><span class="fas fa-fingerprint"></span> Identify</a></p>
+        <p><a class="btn btn-primary btn-lg d-none btn-identify" href="#" role="button"><span class="bi-hand-index"></span> Identify</a></p>
       </div>
     </div>
-
     <hr>
-
   </div> <!-- /container -->
-
 </main>
-
-<footer class="container">
-  <p>&copy; 2021 NTLAB.ID</p>
-</footer>
+<footer class="container"><p>&copy; 2021 NTLAB.ID</p></footer>
 <?php $clear              = __('Clear Registered Templates') ?>
 <?php $clear_message      = __('This will clear all registered templates within server. Do you want to continue?') ?>
 <?php $clear_success      = __('Registered templates cleared successfully.') ?>

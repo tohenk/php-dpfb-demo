@@ -27,7 +27,6 @@
 namespace Demo;
 
 use ElephantIO\Client;
-use ElephantIO\Engine\SocketIO\Version3X;
 
 class RPC
 {
@@ -83,7 +82,7 @@ class RPC
         if (null === $this->socket) {
             try {
                 $url = $this->getUrl();
-                $socket = new Client(new Version3X($url), new RPCLogger());
+                $socket = new Client(Client::engine(Client::CLIENT_4X, $url), new RPCLogger());
                 $socket->initialize();
                 $socket->of('/');
                 $this->socket = $socket;

@@ -1,6 +1,6 @@
 {
     "require": {
-        "ntlab/ntjs": "^1.0.1",
+        "ntlab/ntjs": "^1.0.5",
         "wisembly/elephant.io": "dev-master"
     },
     "repositories": {
