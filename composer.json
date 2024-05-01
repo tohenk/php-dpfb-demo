@@ -1,12 +1,7 @@
 {
     "require": {
-        "ntlab/ntjs": "^1.0.5",
-        "wisembly/elephant.io": "dev-master"
-    },
-    "repositories": {
-        "wisembly-elephant.io": {
-            "type": "vcs",
-            "url": "https://github.com/tohenk/elephant.io.git"
-        }
+        "ntlab/ntjs": "^2.3",
+        "elephantio/elephant.io": "^4.7",
+        "mrclay/jsmin-php": "^2.4"
     }
 }

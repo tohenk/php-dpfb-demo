@@ -3,7 +3,7 @@
 /*
  * The MIT License
  *
- * Copyright (c) 2021 Toha <tohenk@yahoo.com>
+ * Copyright (c) 2021-2024 Toha <tohenk@yahoo.com>
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of
  * this software and associated documentation files (the "Software"), to deal in
@@ -107,37 +107,37 @@ $.define('fp', {
             '</div>'
     },
     isFinger: function(index) {
-        var self = this;
+        const self = this;
         return index >= self.fingers.RIGHT_THUMB.index &&
             index <= self.fingers.LEFT_LITTLE_FINGER.index ? true : false;
     },
     fingerValue: function(index) {
-        var self = this;
-        var value = 0;
+        const self = this;
+        let value = 0;
         if (self.isFinger(index)) {
             value = 1 << (index - 1);
         }
         return value;
     },
     includeFinger: function(mask, index) {
-        var self = this;
+        const self = this;
         return mask | self.fingerValue(index);
     },
     excludeFinger: function(mask, index) {
-        var self = this;
+        const self = this;
         return mask & ~(self.fingerValue(index));
     },
     hasFinger: function(mask, index) {
-        var self = this;
-        var value = self.fingerValue(index);
+        const self = this;
+        const value = self.fingerValue(index);
         if (value > 0) {
-            return (mask & value) == value ? true : false;
+            return (mask & value) === value ? true : false;
         }
     },
     getNextUnenrolledFinger: function(mask) {
-        var self = this;
-        var index = 0;
-        for (var i = self.fingers.RIGHT_THUMB.index; i <= self.fingers.LEFT_LITTLE_FINGER.index; i++) {
+        const self = this;
+        let index = 0;
+        for (let i = self.fingers.RIGHT_THUMB.index; i <= self.fingers.LEFT_LITTLE_FINGER.index; i++) {
             if (!self.hasFinger(mask, i)) {
                 index = i;
                 break;
@@ -146,15 +146,15 @@ $.define('fp', {
         return index;
     },
     getFingerId: function(index) {
-        var self = this;
-        for (var key in self.fingers) {
-            if (self.fingers[key].index == index) {
+        const self = this;
+        for (const key in self.fingers) {
+            if (self.fingers[key].index === index) {
                 return key;
             }
         }
     },
     getFingerInfo: function(id, type) {
-        var self = this;
+        const self = this;
         switch (type) {
             case 0:
             case 'index':
@@ -168,16 +168,16 @@ $.define('fp', {
         }
     },
     getFingerButton: function(index, template) {
-        var self = this;
+        const self = this;
         return $.util.template(template, {INDEX: index, NAME: self.getFingerInfo(self.getFingerId(index), 1)});
     },
     getFingerLayout: function(title, template) {
-        var self = this;
-        var rightFinger = '', leftFinger = '';
-        for (var i = self.fingers.RIGHT_THUMB.index; i <= self.fingers.RIGHT_LITTLE_FINGER.index; i++) {
+        const self = this;
+        let rightFinger = '', leftFinger = '';
+        for (let i = self.fingers.RIGHT_THUMB.index; i <= self.fingers.RIGHT_LITTLE_FINGER.index; i++) {
             rightFinger += self.getFingerButton(i, template);
         }
-        for (var i = self.fingers.LEFT_THUMB.index; i <= self.fingers.LEFT_LITTLE_FINGER.index; i++) {
+        for (let i = self.fingers.LEFT_THUMB.index; i <= self.fingers.LEFT_LITTLE_FINGER.index; i++) {
             leftFinger += self.getFingerButton(i, template);
         }
         return $.util.template(
@@ -198,11 +198,11 @@ $.define('fp', {
         );
     },
     getEnrollDlg: function(create) {
-        var self = this;
+        const self = this;
         if (!self.enrollDlg && create) {
-            var title = '$choose_finger'.replace(/%START%/, self.getFingerInfo(self.getFingerId(self.fingers.RIGHT_THUMB.index), 2))
+            const title = '$choose_finger'.replace(/%START%/, self.getFingerInfo(self.getFingerId(self.fingers.RIGHT_THUMB.index), 2))
                 .replace(/%END%/, self.getFingerInfo(self.getFingerId(self.fingers.LEFT_LITTLE_FINGER.index), 2));
-            var content = self.getFingerLayout(title, self.fingerTmpl.enroll);
+            let content = self.getFingerLayout(title, self.fingerTmpl.enroll);
             content +=
                 '<div class="finger-op">' +
                   '<p class="finger-op-help mb-3"></p>' +
@@ -219,7 +219,7 @@ $.define('fp', {
                         handler: function() {
                             $.ntdlg.close($(this));
                             if (self.connected) {
-                                self.socket.emit('stop');
+                                self.socket.emit('fp-stop');
                             }
                         }
                     }
@@ -232,9 +232,9 @@ $.define('fp', {
         }
     },
     updateEnrolledFingerMask: function() {
-        var self = this;
-        for (var i = self.fingers.RIGHT_THUMB.index; i <= self.fingers.LEFT_LITTLE_FINGER.index; i++) {
-            var enabled = !self.hasFinger(self.fingerMask, i);
+        const self = this;
+        for (let i = self.fingers.RIGHT_THUMB.index; i <= self.fingers.LEFT_LITTLE_FINGER.index; i++) {
+            const enabled = !self.hasFinger(self.fingerMask, i);
             if (enabled) {
                 self.enrollDlg.find('.finger-selector a[data-index=' + i + ']')
                     .removeClass('btn-outline-secondary')
@@ -251,16 +251,16 @@ $.define('fp', {
         }
     },
     enrollFinger: function(index) {
-        var self = this;
+        const self = this;
         self.fingerIndex = index;
         self.enrollCount = self.featuresLen;
         self.enrollDlg.find('.finger-selector').addClass('d-none');
         self.enrollDlg.find('.finger-op').removeClass('d-none');
         self.enrollDlg.find('.finger-op-help').html('$enroll_finger'.replace(/%FINGER%/, self.getFingerInfo(self.getFingerId(self.fingerIndex), 2)));
-        self.socket.emit('enroll');
+        self.socket.emit('fp-enroll');
     },
     enroll: function(mask, index) {
-        var self = this;
+        const self = this;
         if (self.connected) {
             self.fingerMask = mask;
             self.getEnrollDlg(true);
@@ -274,10 +274,10 @@ $.define('fp', {
         }
     },
     getUnenrollDlg: function(create) {
-        var self = this;
+        const self = this;
         if (!self.unenrollDlg && create) {
-            var title = '$unenroll_finger';
-            var content = self.getFingerLayout(title, self.fingerTmpl.unenroll);
+            const title = '$unenroll_finger';
+            const content = self.getFingerLayout(title, self.fingerTmpl.unenroll);
             self.unenrollDlg = $.ntdlg.create('fp-unenroll-dialog', '$unenroll', content, {
                 backdrop: 'static',
                 buttons: {
@@ -285,7 +285,7 @@ $.define('fp', {
                         icon: $.ntdlg.BTN_ICON_OK,
                         handler: function() {
                             $.ntdlg.close($(this));
-                            var fingers = [];
+                            const fingers = [];
                             self.unenrollDlg.find('input:checked').not(':disabled').each(function() {
                                 fingers.push(parseInt($(this).attr('data-index')));
                             });
@@ -307,9 +307,9 @@ $.define('fp', {
         }
     },
     updateUnenrolledFingerMask: function() {
-        var self = this;
-        for (var i = self.fingers.RIGHT_THUMB.index; i <= self.fingers.LEFT_LITTLE_FINGER.index; i++) {
-            var enabled = self.hasFinger(self.fingerMask, i);
+        const self = this;
+        for (let i = self.fingers.RIGHT_THUMB.index; i <= self.fingers.LEFT_LITTLE_FINGER.index; i++) {
+            const enabled = self.hasFinger(self.fingerMask, i);
             if (enabled) {
                 self.unenrollDlg.find('.finger-selector input[data-index=' + i + ']').prop('disabled', false);
             } else {
@@ -319,16 +319,16 @@ $.define('fp', {
         self.unenrollDlg.find('.finger-selector input[type=checkbox]').prop('checked', false);
     },
     unenroll: function(mask) {
-        var self = this;
+        const self = this;
         self.fingerMask = mask;
         self.getUnenrollDlg(true);
         self.updateUnenrolledFingerMask();
         $.ntdlg.show(self.unenrollDlg);
     },
     getVerifyDlg: function(create) {
-        var self = this;
+        const self = this;
         if (!self.verifyDlg && create) {
-            var content =
+            const content =
                 '<div class="finger-op">' +
                   '<div class="d-flex align-items-center pb-3 px-4">' +
                     '<div class="icon me-3"><i class="bi-hand-index fs-2"></i></div>' +
@@ -344,7 +344,7 @@ $.define('fp', {
                             $.ntdlg.close($(this));
                             self.stopVerifyTimer();
                             if (self.connected) {
-                                self.socket.emit('stop');
+                                self.socket.emit('fp-stop');
                             }
                         }
                     }
@@ -353,7 +353,7 @@ $.define('fp', {
         }
     },
     startVerifyTimer: function() {
-        var self = this;
+        const self = this;
         if (self.verifyDlg) {
             self.verifyDlg.find('.finger-op .msg').html('<div>$verify_wait</div><div class="h6 elapsed"></div>');
             self.verifyDlg.find('.finger-op .icon').addClass('text-success');
@@ -361,7 +361,7 @@ $.define('fp', {
         }
     },
     stopVerifyTimer: function() {
-        var self = this;
+        const self = this;
         if (self.timer) {
             clearInterval(self.timer);
             self.timer = null;
@@ -369,44 +369,44 @@ $.define('fp', {
         }
     },
     buildTimer: function() {
-        var self = this;
+        const self = this;
         self.start = new Date().getTime();
-        var f = function() {
-            var elapsed = Math.round((new Date().getTime() - self.start) / 1000);
+        const f = function() {
+            const elapsed = Math.round((new Date().getTime() - self.start) / 1000);
             self.verifyDlg.find('.elapsed').text(self.formatTime(elapsed));
         }
         f();
         self.timer = setInterval(f, 1000);
     },
     formatTime: function(seconds) {
-        var self = this;
+        const self = this;
         if (!self.seconds_in_hour) self.seconds_in_hour = 60 * 60;
         if (!self.seconds_in_minute) self.seconds_in_minute = 60;
-        
-        var hour = Math.floor(seconds / self.seconds_in_hour);
-        var seconds = seconds - (hour * self.seconds_in_hour);
-        var minute = Math.floor(seconds / self.seconds_in_minute);
-        var seconds = seconds - (minute * self.seconds_in_minute);
-        var second = seconds;
-        
+
+        const hour = Math.floor(seconds / self.seconds_in_hour);
+        seconds = seconds - (hour * self.seconds_in_hour);
+        const minute = Math.floor(seconds / self.seconds_in_minute);
+        seconds = seconds - (minute * self.seconds_in_minute);
+        const second = seconds;
+
         return self.formatTick(hour) + ':' + self.formatTick(minute) + ':' + self.formatTick(second);
     },
     formatTick: function(value) {
-        var value = value.toString();
+        value = value.toString();
         while (value.length < 2) {
-            var value = '0' + value;
+            value = '0' + value;
         }
-        
+
         return value;
     },
     closeVerifyDialog: function() {
-        var self = this;
+        const self = this;
         if (self.verifyDlg && self.verifyDlg.hasClass('modal')) {
             $.ntdlg.close(self.verifyDlg);
         }
     },
     retryAcquire: function() {
-        var self = this;
+        const self = this;
         if (self.verifyDlg && self.connected) {
             self.verifyDlg.find('.finger-op .msg').html('<div class="text-danger">$verify_nomatch</div>');
             self.verifyDlg.find('.finger-op .icon').addClass('text-danger');
@@ -417,13 +417,13 @@ $.define('fp', {
         }
     },
     startAcquire: function() {
-        var self = this;
+        const self = this;
         if (self.connected) {
-            self.socket.emit('acquire');
+            self.socket.emit('fp-acquire');
         }
     },
     acquire: function() {
-        var self = this;
+        const self = this;
         if (self.connected) {
             self.getVerifyDlg(true);
             if (self.verifyDlg.hasClass('modal')) {
@@ -433,41 +433,41 @@ $.define('fp', {
         }
     },
     init: function(callback) {
-        var self = this;
+        const self = this;
         self.callback = callback;
         self.socket = io.connect(self.url, {reconnect: true});
-        var notifyConnection = function() {
+        const notifyConnection = function() {
             $(document).trigger('fpconnect');
         }
         self.socket.on('connect', function() {
-            self.socket.emit('self-test');
+            self.socket.emit('fp-self-test');
         });
         self.socket.on('disconnect', function() {
             self.connected = false;
             notifyConnection();
         });
-        self.socket.on('self-test', function(response) {
+        self.socket.on('fp-self-test', function(response) {
             if (response) {
-                var svrName = response.substr(0, response.indexOf('-'));
-                var svrVer = response.substr(response.indexOf('-') + 1);
-                if (svrName == 'DPFPBRIDGE') {
+                const svrName = response.data.substr(0, response.data.indexOf('-'));
+                const svrVer = response.data.substr(response.data.indexOf('-') + 1);
+                if (svrName === 'FPIDENTITY') {
                     self.connected = true;
                     self.server = {name: svrName, protocol: svrVer};
                     console.log(self.server);
-                    self.socket.emit('required-features');
-                    self.socket.emit('set-options', {enrollWithSamples: self.sample});
+                    self.socket.emit('fp-required-features');
+                    self.socket.emit('fp-set-options', {enrollWithSamples: self.sample});
                     notifyConnection();
                 }
             }
         });
-        self.socket.on('required-features', function(featuresLen) {
+        self.socket.on('fp-required-features', function(featuresLen) {
             self.featuresLen = featuresLen;
             console.log('Features length = %d', featuresLen);
         });
-        self.socket.on('acquire-status', function(data) {
+        self.socket.on('fp-acquire-status', function(data) {
             console.log('Acquire status = %s', data.status);
             if (self.verifyDlg) {
-                var msg;
+                let msg;
                 switch (data.status) {
                     case 'connected':
                         msg = '$swipe';
@@ -481,7 +481,7 @@ $.define('fp', {
                 }
             }
         });
-        self.socket.on('acquire-complete', function(data) {
+        self.socket.on('fp-acquire-complete', function(data) {
             console.log('Acquire complete = %s', data.data);
             if (self.verifyDlg) {
                 if (typeof self.callback == 'function') {
@@ -489,10 +489,10 @@ $.define('fp', {
                 }
             }
         });
-        self.socket.on('enroll-status', function(data) {
+        self.socket.on('fp-enroll-status', function(data) {
             console.log('Enroll status = %s', data.status);
             if (self.enrollDlg) {
-                var msg;
+                let msg;
                 switch (data.status) {
                     case 'connected':
                         msg = '$swipe_multiple'.replace(/%NR%/, self.featuresLen);
@@ -506,7 +506,7 @@ $.define('fp', {
                 }
             }
         });
-        self.socket.on('enroll-complete', function(data) {
+        self.socket.on('fp-enroll-complete', function(data) {
             console.log('Enroll complete = %s', data.data);
             if (self.enrollDlg) {
                 self.enrollDlg.find('.finger-op .icon').addClass('text-success');
@@ -521,7 +521,7 @@ $.define('fp', {
                 }
             }
         });
-        self.socket.on('enroll-finished', function(data) {
+        self.socket.on('fp-enroll-finished', function(data) {
             console.log('Enroll finished = %s', data.template);
             if (self.enrollDlg) {
                 self.enrollDlg.find('.finger-op .msg').html('$enroll_complete');

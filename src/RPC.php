@@ -3,7 +3,7 @@
 /*
  * The MIT License
  *
- * Copyright (c) 2021 Toha <tohenk@yahoo.com>
+ * Copyright (c) 2021-2024 Toha <tohenk@yahoo.com>
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of
  * this software and associated documentation files (the "Software"), to deal in
@@ -82,9 +82,9 @@ class RPC
         if (null === $this->socket) {
             try {
                 $url = $this->getUrl();
-                $socket = new Client(Client::engine(Client::CLIENT_4X, $url), new RPCLogger());
-                $socket->initialize();
-                $socket->of('/');
+                $socket = Client::create($url, ['logger' => new RPCLogger()]);
+                $socket->connect();
+                $socket->of('/fp');
                 $this->socket = $socket;
             }
             catch (\Exception $e) {
@@ -124,10 +124,12 @@ class RPC
     public function bootstrap()
     {
         if ($retval = $this->query('self-test')) {
-            list($server, ) = explode('-', $retval);
-            if ('DPFPBRIDGE' === $server) {
-                $this->connected = true;
-                return true;
+            if (isset($retval['data'])) {
+                list($server, ) = explode('-', $retval['data']);
+                if ('FPIDENTITY' === $server) {
+                    $this->connected = true;
+                    return true;
+                }
             }
         }
     }

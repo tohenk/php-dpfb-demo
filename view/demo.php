@@ -23,7 +23,7 @@
     <div class="container">
       <h1 class="display-3 my-5">Digital Persona Fingerprint Bridge Demo</h1>
       <p class="lead">This demo shows you how to integrate <code>NODE-DPFB</code> into your PHP application. You must have already a Digital Persona fingerprint reader configured to allow this demo to work properly.</p>
-      <p class="lead">The DPFP app can be downloaded from <a href="https://github.com/tohenk/node-dpfb/releases">Github</a>. You also need to run the server portion of the App to be able to enroll and identify finger. Get the server from <a href="https://github.com/tohenk/node-dpfb">here</a>, then issue: <code>npm run fpserver</code>.</p>
+      <p class="lead">The DPFP app can be downloaded from <a href="https://github.com/tohenk/node-dpfb/releases">Github</a>. You also need to run the server portion of the App to be able to enroll and identify finger. Get the server from <a href="https://github.com/tohenk/node-identity-authenticator">here</a>, then issue: <code>node app.js --port=9000</code>.</p>
       <div class="alert alert-warning" role="alert">
         <span class="text-danger">Important!</span> When capturing the fingerprint, make sure the DPFB app has focus, not this browser.
       </div>
@@ -78,10 +78,9 @@
 <?php $fp_identify_url    = 'a/fp-verify' ?>
 <?php create_script('Fingerprint')
     ->includeDependency(['Bootstrap.Dialog.Confirm', 'Bootstrap.Dialog.Message', 'JsCookie'])
-    ->includeScript()
     ->add(<<<EOF
-var cookie = 'fingerprints';
-var fingers = {};
+const cookie = 'fingerprints';
+const fingers = {};
 
 // update ui when fingerprint connected or disconnected
 $(document).on('fpconnect', function(e) {
@@ -131,7 +130,7 @@ $.fpUpdate = function() {
 }
 
 $.fpGetFromCookie = function() {
-    var fps = Cookies.get(cookie);
+    const fps = Cookies.get(cookie);
     if (fps) {
         fingers = JSON.parse(fps);
     }
@@ -161,9 +160,9 @@ $.fpClear = function() {
 
 // fingerprint operation, 1 for enroll, 2 for unenroll
 $.fpOp = function(op) {
-    var mask = 0;
+    let mask = 0;
     Object.keys($.fp.fingers).forEach(function(finger) {
-        var idx = $.fp.fingers[finger].index;
+        const idx = $.fp.fingers[finger].index;
         if (fingers[idx]) {
             mask = $.fp.includeFinger(mask, idx);
         }
@@ -194,7 +193,7 @@ $.fp.init(function(status, data) {
             if (json.success) {
                 if (json.id) {
                     $.fp.closeVerifyDialog();
-                    var idx;
+                    let idx;
                     Object.keys(fingers).forEach(function(finger) {
                         if (fingers[finger].id == json.id) {
                             idx = finger;
@@ -223,8 +222,8 @@ $.fp.init(function(status, data) {
             if (json.success) {
                 fingers[$.fp.fingerIndex] = {id: json.id, data: data};
                 $.fpSaveToCookie(true);
-                var mask = $.fp.includeFinger($.fp.fingerMask, $.fp.fingerIndex);
-                var nextFinger = $.fp.getNextUnenrolledFinger(mask);
+                const mask = $.fp.includeFinger($.fp.fingerMask, $.fp.fingerIndex);
+                const nextFinger = $.fp.getNextUnenrolledFinger(mask);
                 if (nextFinger > 0) {
                     $.ntdlg.confirm('my-fp-msg', '$enroll', '$enroll_next', $.ntdlg.ICON_QUESTION, function() {
                         $.fp.enroll(mask, nextFinger); 
@@ -238,7 +237,7 @@ $.fp.init(function(status, data) {
         });
         break;
     case 'finger-unenrolled':
-        var ids = [];
+        const ids = [];
         data.forEach(function(finger) {
             if (fingers[finger]) {
                 ids.push(fingers[finger].id);

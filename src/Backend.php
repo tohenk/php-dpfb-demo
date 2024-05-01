@@ -3,7 +3,7 @@
 /*
  * The MIT License
  *
- * Copyright (c) 2021 Toha <tohenk@yahoo.com>
+ * Copyright (c) 2021-2024 Toha <tohenk@yahoo.com>
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of
  * this software and associated documentation files (the "Software"), to deal in
@@ -27,12 +27,14 @@
 namespace Demo;
 
 use NTLAB\JS\Backend as Base;
+use NTLAB\JS\CompressorInterface;
 use NTLAB\JS\DependencyResolverInterface;
 use NTLAB\JS\Manager;
 use NTLAB\JS\Script;
 use NTLAB\JS\Util\Asset;
+use JSMin\JSMin;
 
-class Backend extends Base implements DependencyResolverInterface
+class Backend extends Base implements CompressorInterface, DependencyResolverInterface
 {
     /**
      * @var array
@@ -53,14 +55,13 @@ class Backend extends Base implements DependencyResolverInterface
     /**
      * Constructor.
      *
-     * @param boolean $useCDN
+     * @param string $cdn
      */
-    public function __construct($useCDN = false)
+    public function __construct($cdn = null)
     {
-        if ($useCDN) {
+        if (is_readable($cdn)) {
             $manager = Manager::getInstance();
-            $manager->parseCdn(json_decode(file_get_contents($manager->getCdnInfoFile()), true));
-            $manager->parseCdn(json_decode(file_get_contents(__DIR__.'/../data/cdn.json'), true));
+            $manager->parseCdn(json_decode(file_get_contents($cdn), true));
         }
     }
 
@@ -107,6 +108,15 @@ class Backend extends Base implements DependencyResolverInterface
         }
 
         return $dir.'/'.$name;
+    }
+
+    /**
+     * {@inheritDoc}
+     * @see \NTLAB\JS\CompressorInterface::compress()
+     */
+    public function compress($content)
+    {
+        return JSMin::minify($content);
     }
 
     /**

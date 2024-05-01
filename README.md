@@ -1,5 +1,4 @@
-HOW TO RUN THIS DEMO
-====================
+# How to Run This Demo
 
 * Clone this project
 * Get composer and install dependencies

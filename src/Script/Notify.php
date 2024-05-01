@@ -3,7 +3,7 @@
 /*
  * The MIT License
  *
- * Copyright (c) 2021 Toha <tohenk@yahoo.com>
+ * Copyright (c) 2021-2024 Toha <tohenk@yahoo.com>
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of
  * this software and associated documentation files (the "Software"), to deal in
@@ -55,14 +55,14 @@ class Notify extends Base
 $.define('notif', {
     useToast: $useToast,
     supported: function() {
-        var self = this;
-        if (typeof $.notif.allowed == 'undefined') {
-            var allowed = false;
+        const self = this;
+        if (typeof $.notif.allowed === 'undefined') {
+            let allowed = false;
             // https://developer.mozilla.org/en/docs/Web/API/notification
             if (window.Notification && Notification.permission !== "denied") {
                 if (Notification.permission !== "granted") {
                     Notification.requestPermission(function(permission) {
-                        if (permission == "granted") {
+                        if (permission === "granted") {
                             allowed = true;
                         }
                     });
@@ -75,9 +75,9 @@ $.define('notif', {
         return $.notif.allowed;
     },
     notifyNotification: function(message, options) {
-        var self = this;
-        if (typeof options == 'string') {
-            var icon;
+        const self = this;
+        if (typeof options === 'string') {
+            let icon;
             switch (options) {
                 case 'success':
                     // https://www.iconfinder.com/iconpack
@@ -96,19 +96,23 @@ $.define('notif', {
                     icon = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAACR0lEQVRYhe2VP2gUQRTG5zQS4+Vy2ZkXBcEgqAGb1CksooIYEYJFCsWglSIKQkjuLjvzIoJlehEsbWyEgJUoiGAS9QoPBI0HFqYJpDC5nHfz3knGwkSiub2s96/xPthi3/v2/T5mdhghWmqpBsUmc32AnAbkt/GJlSPNpY+43WD4nTL2htKUUIbnhHC7msZX2t5SaJ/9enMRhTzrGXu9KfB9ie8HAYm7UqtHN2uen+9XSPno7fyBhgcApMfS0J1tdcPToOlRQ+HS2LOgeUEMZdu3NUeXooD0VfnF042hjyx2SOQvcVM8FWRRmoYB+bO46vbWna8M3ft7iQE5DYbf/FEzNFNui2pSZ2LtuELKd46v7d9a75kquZ6pktta85KuF5B+dE2sHqsT3kUA+WW5Y1YugBBCgLbjCu1zIVykZrzSfEUhz5YbFhRADLo2qTnj+XSpJnjsZk4B0orn5/vL9QMDCCGkLgxIY5fjKedVHQA0PwTD00H9SgGEEAKQHyjk+1XBPV08AYYWxehStNoA8ZTzpLHLUhcG/o1+ze1RyB+UpuFKNoU8Lw2/rujx6bJEfi8GXVtovjKUBEMzoT/YQWDsC6ntWChzd+rbYUBa95Kut14BYpO5PjBU6hgrHNrB6iKA9iloOx5mMCCnFfJ8OC/dVUhPKpqUpgtScybsfoX5B35rKNuuNGc9Y88HDzQ81+0XT4YaWIU2LqtXgQZA/uQZe64xeBfxNF2UmjOBFmnsGdC8sHm+6/kA0jpo/ljpOm+ppf9PPwHiDETAsgiBMAAAAABJRU5ErkJggg==';
                     break;
             }
-            var options = {};
-            if (icon) options.icon = icon;
+            options = {};
+            if (icon) {
+                options.icon = icon;
+            }
         }
-        var title = options.title || '$title';
-        var content = {body: message};
-        if (options.icon) content.icon = options.icon;
-        var n = new Notification(title, content);
+        const title = options.title || '$title';
+        const content = {body: message};
+        if (options.icon) {
+            content.icon = options.icon;
+        }
+        const n = new Notification(title, content);
         setTimeout(n.close.bind(n), options.delay || 5000);
         return n; 
     },
     notifyToast: function(message, options) {
-        var self = this;
-        var icon;
+        const self = this;
+        let icon;
         switch (options) {
             case 'success':
                 icon = 'bi-check-circle text-success';
@@ -123,7 +127,7 @@ $.define('notif', {
                 icon = 'bi-exclamation-circle text-warning';
                 break;
         }
-        var tmpl =
+        const tmpl =
             '<div class="toast" role="alert" aria-live="assertive" aria-atomic="true">' +
               '<div class="toast-header">' +
                 '<span class="bi-bell me-1"></span>' +
@@ -137,21 +141,21 @@ $.define('notif', {
                 '</div>' +
               '</div>' +
             '</div>';
-        var toast = tmpl
+        const toast = tmpl
             .replace(/%TITLE%/, options.title || '$title')
             .replace(/%ICON%/, icon)
             .replace(/%MESSAGE%/, message)
         ;
-        if (typeof self.container == 'undefined') {
+        if (typeof self.container === 'undefined') {
             self.container = $('<div class="toast-container position-fixed bottom-0 end-0 p-3"></div>').appendTo(document.body);
         }
-        var el = $(toast).appendTo(self.container);
-        var t = new bootstrap.Toast(el[0]);
+        const el = $(toast).appendTo(self.container);
+        const t = new bootstrap.Toast(el[0]);
         t.show();
         return t;
     },
     notify: function(message, options) {
-        var self = this;
+        const self = this;
         if (!self.useToast && self.supported()) {
             self.notifyNotification(message, options);
         } else {
@@ -159,8 +163,8 @@ $.define('notif', {
         }
     },
     init: function() {
-        var self = this;
-        if (typeof $.notify == 'undefined') {
+        const self = this;
+        if (typeof $.notify === 'undefined') {
             $.notify = self.notify.bind(self);
         }
     }

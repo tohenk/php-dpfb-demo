@@ -3,7 +3,7 @@
 /*
  * The MIT License
  *
- * Copyright (c) 2020 Toha <tohenk@yahoo.com>
+ * Copyright (c) 2020-2024 Toha <tohenk@yahoo.com>
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of
  * this software and associated documentation files (the "Software"), to deal in
@@ -28,5 +28,5 @@
 $composer = require_once __DIR__.'/../vendor/autoload.php';
 $composer->addPsr4('Demo\\', __DIR__.'/../src');
 
-$demo = new Demo\Demo();
+$demo = new Demo\Demo(['cdn' => __DIR__.'/cdn/cdn.json']);
 $demo->run();
