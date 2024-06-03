@@ -24,9 +24,10 @@
  * SOFTWARE.
  */
 
+$rootDir = __DIR__.'/..';
 /** @var \Composer\Autoload\ClassLoader $composer */
-$composer = require_once __DIR__.'/../vendor/autoload.php';
-$composer->addPsr4('Demo\\', __DIR__.'/../src');
+$composer = require_once $rootDir.'/vendor/autoload.php';
+$composer->addPsr4('Demo\\', $rootDir.'/src');
 
-$demo = new Demo\Demo(['cdn' => __DIR__.'/cdn/cdn.json']);
+$demo = new Demo\Demo(['root_dir' => $rootDir, 'cdn' => __DIR__.'/cdn/cdn.json']);
 $demo->run();

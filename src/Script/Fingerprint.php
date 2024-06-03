@@ -36,7 +36,7 @@ class Fingerprint extends Base
      */
     protected function initialize()
     {
-        $this->addDependencies(['JQuery.NS', 'JQuery.Util', 'Bootstrap.Dialog', 'SocketIO', 'Notify']);
+        $this->addDependencies(['JQuery.NS', 'JQuery.Util', 'SocketIO', 'Bootstrap.Dialog', 'Bootstrap.Notify']);
     }
 
     /**
@@ -45,7 +45,7 @@ class Fingerprint extends Base
      */
     public function getScript()
     {
-        $with_sample          = 'false';
+        $with_sample          = $this->useVar('fpsample', $this->getOption('with_sample', false));
         $enroll               = $this->trans('Finger Enrollment');
         $close                = $this->trans('Close');
         $finger_thumb         = $this->trans('Thumb Finger');

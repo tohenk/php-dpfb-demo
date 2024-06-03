@@ -43,7 +43,7 @@ class Demo
      *
      * @var boolean
      */
-    protected $minifyScript = true;
+    protected $minifyScript = false;
 
     /**
      * Enable/disable script debug information.
@@ -51,6 +51,16 @@ class Demo
      * @var boolean
      */
     protected $debugScript = true;
+
+    /**
+     * Enable/disable script embedding in response.
+     *
+     * When script embedding set to `false`, use an external web server
+     * is a must.
+     *
+     * @var boolean
+     */
+    protected $embedScript = true;
 
     /**
      * Finger print server url.
@@ -84,7 +94,7 @@ class Demo
     {
         $manager = Manager::getInstance();
         // create backend instance
-        $backend = new Backend(isset($this->options['cdn']) ? $this->options['cdn'] : null);
+        $backend = new Backend(array_merge($this->options, ['embed_script' => $this->embedScript]));
         // set script backend
         $manager->setBackend($backend);
         // register script resolver
@@ -96,6 +106,10 @@ class Demo
         // set script debug information
         if ($this->debugScript) {
             Script::setDebug(true);
+        }
+        // register script consumer
+        if (!$this->embedScript) {
+            $manager->setConsumer($backend);
         }
     }
 
@@ -161,9 +175,8 @@ class Demo
     {
         $route = isset($_SERVER['SCRIPT_URL']) ? $_SERVER['SCRIPT_URL'] : $_SERVER['REQUEST_URI'];
         if ($scriptName = $_SERVER['SCRIPT_NAME']) {
-            $scriptPath = dirname($scriptName);
-            if (0 === strpos($route, $scriptPath)) {
-                $route = substr($route, strlen($scriptPath));
+            if (0 === strpos($route, $scriptName)) {
+                $route = substr($route, strlen($scriptName));
             }
         }
         if (false !== ($p = strpos($route, '?'))) {
@@ -172,7 +185,7 @@ class Demo
         return $route;
     }
 
-    protected function executeIndex()
+    protected function executeIndex($parameters = [])
     {
         $content = $this->useView('demo.php', ['uri' => $_SERVER['REQUEST_URI']]);
         $content = $this->useView('layout.php', ['content' => $content, 'title' => 'DPFB Demo']);
@@ -180,7 +193,7 @@ class Demo
         echo $content;
     }
 
-    protected function executeAjax($parameters)
+    protected function executeAjax($parameters = [])
     {
         $result['success'] = false;
         $cmd = $parameters['cmd'];
@@ -251,17 +264,16 @@ class Demo
      */
     public function run()
     {
+        $parameters = [];
         $route = $this->getRoute();
-        $vars = [];
         if (isset($_SERVER['QUERY_STRING']) && strlen($_SERVER['QUERY_STRING'])) {
-            parse_str($_SERVER['QUERY_STRING'], $vars);
+            parse_str($_SERVER['QUERY_STRING'], $parameters);
         }
-
         $matches = null;
         if (preg_match('#^/a/(?<cmd>[a-zA-Z0-9_\-]+)$#', $route, $matches)) {
-            $this->executeAjax(array_merge(['cmd' => $matches['cmd']], $vars));
+            $this->executeAjax(array_merge($parameters, ['cmd' => $matches['cmd']]));
         } else {
-            $this->executeIndex();
+            $this->executeIndex($parameters);
         }
     }
 }

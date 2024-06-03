@@ -26,6 +26,8 @@
 
 use NTLAB\JS\Manager;
 use NTLAB\JS\BackendInterface;
+use NTLAB\JS\Script;
+use NTLAB\JS\Util\JSValue;
 
 /**
  * @return \Demo\Backend
@@ -66,7 +68,27 @@ function include_javascripts()
 
 function include_script()
 {
-    return Manager::getInstance()->getScript(true);
+    $manager = Manager::getInstance();
+    $embedded = _get_backend()->isScriptEmbedded();
+    // get script content
+    if ($content = $manager->getScript($embedded)) {
+        if (!$embedded) {
+            // cache script when embedding is disabled
+            $scriptId = _get_backend()->cacheScript($content);
+            $content = null;
+            // generate script variables
+            if ($vars = Script::getVars()) {
+                $vars = JSValue::createInlined($vars);
+                $content .= $manager->scriptTag("window.VARS.{$vars}");
+            }
+            if ($content) {
+                $content .= "\n";
+            }
+            // include cached script
+            $content .= _get_backend()->javascriptTag(sprintf('/js/%s.js', $scriptId));
+        }
+    }
+    return $content;
 }
 
 function __($message)

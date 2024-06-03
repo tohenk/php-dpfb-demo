@@ -28,13 +28,15 @@ namespace Demo;
 
 use NTLAB\JS\Backend as Base;
 use NTLAB\JS\CompressorInterface;
+use NTLAB\JS\ConsumerInterface;
 use NTLAB\JS\DependencyResolverInterface;
 use NTLAB\JS\Manager;
 use NTLAB\JS\Script;
 use NTLAB\JS\Util\Asset;
+use NTLAB\JS\Util\JSValue;
 use JSMin\JSMin;
 
-class Backend extends Base implements CompressorInterface, DependencyResolverInterface
+class Backend extends Base implements CompressorInterface, ConsumerInterface, DependencyResolverInterface
 {
     /**
      * @var array
@@ -53,15 +55,62 @@ class Backend extends Base implements CompressorInterface, DependencyResolverInt
     ];
 
     /**
+     * @var array
+     */
+    protected $options = [];
+
+    /**
      * Constructor.
      *
-     * @param string $cdn
+     * @param array $options
      */
-    public function __construct($cdn = null)
+    public function __construct($options = [])
     {
-        if (is_readable($cdn)) {
+        $this->options = (array) $options;
+        if (isset($this->options['cdn']) && is_readable($cdn = $this->options['cdn'])) {
             $manager = Manager::getInstance();
             $manager->parseCdn(json_decode(file_get_contents($cdn), true));
+        }
+    }
+
+    /**
+     * Is script embedded as response?
+     *
+     * @return boolean
+     */
+    public function isScriptEmbedded()
+    {
+        return isset($this->options['embed_script']) ? (bool)$this->options['embed_script'] : true;
+    }
+
+    /**
+     * Get script cache dir.
+     *
+     * @return string
+     */
+    public function getScriptCacheDir()
+    {
+        return $this->options['root_dir'].'/var/script';
+    }
+
+    /**
+     * Cache script content and return its id.
+     *
+     * @param string $content
+     * @return string
+     */
+    public function cacheScript($content)
+    {
+        if ($content) {
+            $id = sha1($content);
+            if (!is_dir($cacheDir = $this->getScriptCacheDir())) {
+                mkdir($cacheDir, '0777', true);
+            }
+            $filename = $cacheDir.DIRECTORY_SEPARATOR.$id.'.js';
+            if (!is_file($filename)) {
+                file_put_contents($filename, $content);
+            }
+            return $id;
         }
     }
 
@@ -111,6 +160,100 @@ class Backend extends Base implements CompressorInterface, DependencyResolverInt
     }
 
     /**
+     * Create script helper.
+     *
+     * @param string $scriptName
+     * @return \NTLAB\JS\Script
+     */
+    public function createScript($scriptName)
+    {
+        return Script::create($scriptName);
+    }
+
+    /**
+     * Use stylesheet asset.
+     *
+     * @param string $stylesheet
+     */
+    public function useStylesheet($stylesheet)
+    {
+        $this->addAsset($stylesheet, static::ASSET_CSS);
+    }
+
+    /**
+     * Use javascript asset.
+     *
+     * @param string $stylesheet
+     */
+    public function useJavascript($javascript)
+    {
+        $this->addAsset($javascript, static::ASSET_JS);
+    }
+
+    /**
+     * Get link to stylesheet element.
+     *
+     * @param string $href
+     * @param string $rel
+     * @return string
+     */
+    public function stylesheetTag($href, $rel = 'stylesheet')
+    {
+        return "<link rel=\"{$rel}\" href=\"{$href}\">";
+    }
+
+    /**
+     * Generate stylesheet include elements.
+     *
+     * @return string
+     */
+    public function includeStylesheets()
+    {
+        $css = [];
+        foreach (array_merge($this->css['first'], $this->css['default']) as $stylesheet) {
+            $css[] = $this->stylesheetTag($stylesheet);
+        }
+
+        return implode("\n", $css);
+    }
+
+    /**
+     * Get script element.
+     *
+     * @param string $src
+     * @param string $type
+     * @return string
+     */
+    public function javascriptTag($src, $type = 'text/javascript')
+    {
+        return "<script type=\"{$type}\" src=\"{$src}\"></script>";
+    }
+
+    /**
+     * Generate script include elements.
+     *
+     * @return string
+     */
+    public function includeJavascripts()
+    {
+        $js = [];
+        foreach (array_merge($this->js['first'], $this->js['default']) as $javascript) {
+            $js[] = $this->javascriptTag($javascript);
+        }
+
+        return implode("\n", $js);
+    }
+
+    /**
+     * {@inheritDoc}
+     * @see \NTLAB\JS\Backend::getDefaultRepository()
+     */
+    public function getDefaultRepository()
+    {
+        return 'jquery';
+    }
+
+    /**
      * {@inheritDoc}
      * @see \NTLAB\JS\CompressorInterface::compress()
      */
@@ -129,43 +272,19 @@ class Backend extends Base implements CompressorInterface, DependencyResolverInt
     }
 
     /**
-     * Create script helper.
-     *
-     * @param string $scriptName
-     * @return \NTLAB\JS\Script
+     * {@inheritDoc}
+     * @see \NTLAB\JS\ConsumerInterface::consume()
      */
-    public function createScript($scriptName)
+    public function consume($vars)
     {
-        return Script::create($scriptName);
     }
 
-    public function useStylesheet($stylesheet)
+    /**
+     * {@inheritDoc}
+     * @see \NTLAB\JS\ConsumerInterface::use()
+     */
+    public function use($name, $value)
     {
-        $this->addAsset($stylesheet, static::ASSET_CSS);
-    }
-
-    public function useJavascript($javascript)
-    {
-        $this->addAsset($javascript, static::ASSET_JS);
-    }
-
-    public function includeStylesheets()
-    {
-        $css = [];
-        foreach (array_merge($this->css['first'], $this->css['default']) as $stylesheet) {
-            $css[] = sprintf('<link rel="stylesheet" href="%s">', $stylesheet);
-        }
-
-        return implode("\n", $css);
-    }
-
-    public function includeJavascripts()
-    {
-        $js = [];
-        foreach (array_merge($this->js['first'], $this->js['default']) as $javascript) {
-            $js[] = sprintf('<script type="text/javascript" src="%s"></script>', $javascript);
-        }
-
-        return implode("\n", $js);
+        return JSValue::createRaw(sprintf('window.VARS.%s', $name));
     }
 }

@@ -81,12 +81,10 @@
     ->add(<<<EOF
 const cookie = 'fingerprints';
 const fingers = {};
-
 // update ui when fingerprint connected or disconnected
 $(document).on('fpconnect', function(e) {
     $.fpUpdate();
 });
-
 // button handler
 $('a.btn-clear').on('click', function(e) {
     e.preventDefault();
@@ -104,7 +102,6 @@ $('a.btn-identify').on('click', function(e) {
     e.preventDefault();
     $.fp.acquire();
 });
-
 // update UI according to states
 $.fpUpdate = function() {
     if ($.fp.connected) {
@@ -128,19 +125,16 @@ $.fpUpdate = function() {
         $('a.btn-identify').addClass('d-none');
     }
 }
-
 $.fpGetFromCookie = function() {
     const fps = Cookies.get(cookie);
     if (fps) {
         fingers = JSON.parse(fps);
     }
 }
-
 $.fpSaveToCookie = function(update) {
     Cookies.set(cookie, fingers);
     if (update) $.fpUpdate();
 }
-
 // clear registered templates
 $.fpClear = function() {
     $.ntdlg.confirm('my-fp-msg', '$clear', '$clear_message', $.ntdlg.ICON_QUESTION, function() {
@@ -157,7 +151,6 @@ $.fpClear = function() {
         ; 
     });
 }
-
 // fingerprint operation, 1 for enroll, 2 for unenroll
 $.fpOp = function(op) {
     let mask = 0;
@@ -176,7 +169,6 @@ $.fpOp = function(op) {
         break;
     }
 }
-
 // initialize fingerprint
 $.fp.init(function(status, data) {
     switch (status) {
@@ -195,7 +187,7 @@ $.fp.init(function(status, data) {
                     $.fp.closeVerifyDialog();
                     let idx;
                     Object.keys(fingers).forEach(function(finger) {
-                        if (fingers[finger].id == json.id) {
+                        if (fingers[finger].id === json.id) {
                             idx = finger;
                         }
                     });
