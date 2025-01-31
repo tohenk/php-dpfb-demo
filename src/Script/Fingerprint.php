@@ -3,7 +3,7 @@
 /*
  * The MIT License
  *
- * Copyright (c) 2021-2024 Toha <tohenk@yahoo.com>
+ * Copyright (c) 2021-2025 Toha <tohenk@yahoo.com>
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of
  * this software and associated documentation files (the "Software"), to deal in
@@ -26,13 +26,13 @@
 
 namespace Demo\Script;
 
-use NTLAB\JS\Script\JQuery as Base;
+use NTLAB\JS\Repo\Script\JQuery as Base;
 
 class Fingerprint extends Base
 {
     /**
      * {@inheritDoc}
-     * @see \NTLAB\JS\Script\JQuery::initialize()
+     * @see \NTLAB\JS\Repo\Script\JQuery::initialize()
      */
     protected function initialize()
     {
@@ -106,12 +106,12 @@ $.define('fp', {
               '<label for="finger-check-%INDEX%" class="custom-control-label">%NAME%</label>' +
             '</div>'
     },
-    isFinger: function(index) {
+    isFinger(index) {
         const self = this;
         return index >= self.fingers.RIGHT_THUMB.index &&
             index <= self.fingers.LEFT_LITTLE_FINGER.index ? true : false;
     },
-    fingerValue: function(index) {
+    fingerValue(index) {
         const self = this;
         let value = 0;
         if (self.isFinger(index)) {
@@ -119,22 +119,22 @@ $.define('fp', {
         }
         return value;
     },
-    includeFinger: function(mask, index) {
+    includeFinger(mask, index) {
         const self = this;
         return mask | self.fingerValue(index);
     },
-    excludeFinger: function(mask, index) {
+    excludeFinger(mask, index) {
         const self = this;
         return mask & ~(self.fingerValue(index));
     },
-    hasFinger: function(mask, index) {
+    hasFinger(mask, index) {
         const self = this;
         const value = self.fingerValue(index);
         if (value > 0) {
             return (mask & value) === value ? true : false;
         }
     },
-    getNextUnenrolledFinger: function(mask) {
+    getNextUnenrolledFinger(mask) {
         const self = this;
         let index = 0;
         for (let i = self.fingers.RIGHT_THUMB.index; i <= self.fingers.LEFT_LITTLE_FINGER.index; i++) {
@@ -145,7 +145,7 @@ $.define('fp', {
         }
         return index;
     },
-    getFingerId: function(index) {
+    getFingerId(index) {
         const self = this;
         for (const key in self.fingers) {
             if (self.fingers[key].index === index) {
@@ -153,7 +153,7 @@ $.define('fp', {
             }
         }
     },
-    getFingerInfo: function(id, type) {
+    getFingerInfo(id, type) {
         const self = this;
         switch (type) {
             case 0:
@@ -167,11 +167,11 @@ $.define('fp', {
                 return self.fingers[id] ? self.fingers[id].fmt.replace(/%FINGER%/, self.fingers[id].name) : null;
         }
     },
-    getFingerButton: function(index, template) {
+    getFingerButton(index, template) {
         const self = this;
         return $.util.template(template, {INDEX: index, NAME: self.getFingerInfo(self.getFingerId(index), 1)});
     },
-    getFingerLayout: function(title, template) {
+    getFingerLayout(title, template) {
         const self = this;
         let rightFinger = '', leftFinger = '';
         for (let i = self.fingers.RIGHT_THUMB.index; i <= self.fingers.RIGHT_LITTLE_FINGER.index; i++) {
@@ -197,7 +197,7 @@ $.define('fp', {
             {TITLE: title, LEFT: leftFinger, RIGHT: rightFinger}
         );
     },
-    getEnrollDlg: function(create) {
+    getEnrollDlg(create) {
         const self = this;
         if (!self.enrollDlg && create) {
             const title = '$choose_finger'.replace(/%START%/, self.getFingerInfo(self.getFingerId(self.fingers.RIGHT_THUMB.index), 2))
@@ -216,7 +216,7 @@ $.define('fp', {
                 buttons: {
                     '$close': {
                         icon: $.ntdlg.BTN_ICON_CANCEL,
-                        handler: function() {
+                        handler() {
                             $.ntdlg.close($(this));
                             if (self.connected) {
                                 self.socket.emit('fp-stop');
@@ -231,7 +231,7 @@ $.define('fp', {
             });
         }
     },
-    updateEnrolledFingerMask: function() {
+    updateEnrolledFingerMask() {
         const self = this;
         for (let i = self.fingers.RIGHT_THUMB.index; i <= self.fingers.LEFT_LITTLE_FINGER.index; i++) {
             const enabled = !self.hasFinger(self.fingerMask, i);
@@ -250,7 +250,7 @@ $.define('fp', {
             }
         }
     },
-    enrollFinger: function(index) {
+    enrollFinger(index) {
         const self = this;
         self.fingerIndex = index;
         self.enrollCount = self.featuresLen;
@@ -259,7 +259,7 @@ $.define('fp', {
         self.enrollDlg.find('.finger-op-help').html('$enroll_finger'.replace(/%FINGER%/, self.getFingerInfo(self.getFingerId(self.fingerIndex), 2)));
         self.socket.emit('fp-enroll');
     },
-    enroll: function(mask, index) {
+    enroll(mask, index) {
         const self = this;
         if (self.connected) {
             self.fingerMask = mask;
@@ -273,7 +273,7 @@ $.define('fp', {
             }
         }
     },
-    getUnenrollDlg: function(create) {
+    getUnenrollDlg(create) {
         const self = this;
         if (!self.unenrollDlg && create) {
             const title = '$unenroll_finger';
@@ -283,7 +283,7 @@ $.define('fp', {
                 buttons: {
                     '$unregister': {
                         icon: $.ntdlg.BTN_ICON_OK,
-                        handler: function() {
+                        handler() {
                             $.ntdlg.close($(this));
                             const fingers = [];
                             self.unenrollDlg.find('input:checked').not(':disabled').each(function() {
@@ -298,7 +298,7 @@ $.define('fp', {
                     },
                     '$close': {
                         icon: $.ntdlg.BTN_ICON_CANCEL,
-                        handler: function() {
+                        handler() {
                             $.ntdlg.close($(this));
                         }
                     }
@@ -306,7 +306,7 @@ $.define('fp', {
             });
         }
     },
-    updateUnenrolledFingerMask: function() {
+    updateUnenrolledFingerMask() {
         const self = this;
         for (let i = self.fingers.RIGHT_THUMB.index; i <= self.fingers.LEFT_LITTLE_FINGER.index; i++) {
             const enabled = self.hasFinger(self.fingerMask, i);
@@ -318,14 +318,14 @@ $.define('fp', {
         }
         self.unenrollDlg.find('.finger-selector input[type=checkbox]').prop('checked', false);
     },
-    unenroll: function(mask) {
+    unenroll(mask) {
         const self = this;
         self.fingerMask = mask;
         self.getUnenrollDlg(true);
         self.updateUnenrolledFingerMask();
         $.ntdlg.show(self.unenrollDlg);
     },
-    getVerifyDlg: function(create) {
+    getVerifyDlg(create) {
         const self = this;
         if (!self.verifyDlg && create) {
             const content =
@@ -340,7 +340,7 @@ $.define('fp', {
                 buttons: {
                     '$close': {
                         icon: $.ntdlg.BTN_ICON_CANCEL,
-                        handler: function() {
+                        handler() {
                             $.ntdlg.close($(this));
                             self.stopVerifyTimer();
                             if (self.connected) {
@@ -352,7 +352,7 @@ $.define('fp', {
             });
         }
     },
-    startVerifyTimer: function() {
+    startVerifyTimer() {
         const self = this;
         if (self.verifyDlg) {
             self.verifyDlg.find('.finger-op .msg').html('<div>$verify_wait</div><div class="h6 elapsed"></div>');
@@ -360,7 +360,7 @@ $.define('fp', {
             self.buildTimer();
         }
     },
-    stopVerifyTimer: function() {
+    stopVerifyTimer() {
         const self = this;
         if (self.timer) {
             clearInterval(self.timer);
@@ -368,7 +368,7 @@ $.define('fp', {
             self.verifyDlg.find('.finger-op .icon').removeClass('text-success');
         }
     },
-    buildTimer: function() {
+    buildTimer() {
         const self = this;
         self.start = new Date().getTime();
         const f = function() {
@@ -378,7 +378,7 @@ $.define('fp', {
         f();
         self.timer = setInterval(f, 1000);
     },
-    formatTime: function(seconds) {
+    formatTime(seconds) {
         const self = this;
         if (!self.seconds_in_hour) self.seconds_in_hour = 60 * 60;
         if (!self.seconds_in_minute) self.seconds_in_minute = 60;
@@ -391,7 +391,7 @@ $.define('fp', {
 
         return self.formatTick(hour) + ':' + self.formatTick(minute) + ':' + self.formatTick(second);
     },
-    formatTick: function(value) {
+    formatTick(value) {
         value = value.toString();
         while (value.length < 2) {
             value = '0' + value;
@@ -399,13 +399,13 @@ $.define('fp', {
 
         return value;
     },
-    closeVerifyDialog: function() {
+    closeVerifyDialog() {
         const self = this;
         if (self.verifyDlg && self.verifyDlg.hasClass('modal')) {
             $.ntdlg.close(self.verifyDlg);
         }
     },
-    retryAcquire: function() {
+    retryAcquire() {
         const self = this;
         if (self.verifyDlg && self.connected) {
             self.verifyDlg.find('.finger-op .msg').html('<div class="text-danger">$verify_nomatch</div>');
@@ -416,13 +416,13 @@ $.define('fp', {
             }, 2000);
         }
     },
-    startAcquire: function() {
+    startAcquire() {
         const self = this;
         if (self.connected) {
             self.socket.emit('fp-acquire');
         }
     },
-    acquire: function() {
+    acquire() {
         const self = this;
         if (self.connected) {
             self.getVerifyDlg(true);
@@ -432,7 +432,7 @@ $.define('fp', {
             self.startAcquire();
         }
     },
-    init: function(callback) {
+    init(callback) {
         const self = this;
         self.callback = callback;
         self.socket = io.connect(self.url, {reconnect: true});

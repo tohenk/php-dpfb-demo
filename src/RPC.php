@@ -3,7 +3,7 @@
 /*
  * The MIT License
  *
- * Copyright (c) 2021-2024 Toha <tohenk@yahoo.com>
+ * Copyright (c) 2021-2025 Toha <tohenk@yahoo.com>
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of
  * this software and associated documentation files (the "Software"), to deal in
@@ -53,7 +53,7 @@ class RPC
      * Set socket url.
      *
      * @param string $url  Websocket url
-     * @return RPC
+     * @return \Demo\RPC
      */
     public function setUrl($url)
     {
@@ -75,7 +75,7 @@ class RPC
     /**
      * Get socket instance.
      *
-     * @return Client
+     * @return \ElephantIO\Client
      */
     public function getSocket()
     {

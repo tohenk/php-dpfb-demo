@@ -4,20 +4,20 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "14ac701260e69da8d24bd7393ff6cd41",
+    "content-hash": "19992685a2bfde9974520203d192ae75",
     "packages": [
         {
             "name": "elephantio/elephant.io",
-            "version": "v4.7.1",
+            "version": "v4.12.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/ElephantIO/elephant.io.git",
-                "reference": "944682418d6d081988d1683b2d5a6239eded027d"
+                "reference": "fe65ded4d625bd794a13463875c89411f1b71abf"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/ElephantIO/elephant.io/zipball/944682418d6d081988d1683b2d5a6239eded027d",
-                "reference": "944682418d6d081988d1683b2d5a6239eded027d",
+                "url": "https://api.github.com/repos/ElephantIO/elephant.io/zipball/fe65ded4d625bd794a13463875c89411f1b71abf",
+                "reference": "fe65ded4d625bd794a13463875c89411f1b71abf",
                 "shasum": ""
             },
             "require": {
@@ -78,9 +78,9 @@
             ],
             "support": {
                 "issues": "https://github.com/ElephantIO/elephant.io/issues",
-                "source": "https://github.com/ElephantIO/elephant.io/tree/v4.7.1"
+                "source": "https://github.com/ElephantIO/elephant.io/tree/v4.12.2"
             },
-            "time": "2024-03-19T02:49:15+00:00"
+            "time": "2024-12-03T03:35:09+00:00"
         },
         {
             "name": "mrclay/jsmin-php",
@@ -141,31 +141,28 @@
         },
         {
             "name": "ntlab/ntjs",
-            "version": "v3.3.1",
+            "version": "v4.0.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/tohenk/php-ntjs.git",
-                "reference": "304d2c9d51b10d54fe335be6064835585dd753d4"
+                "reference": "f002047d44a457e8960a6f70054da76dbab3edbc"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/tohenk/php-ntjs/zipball/304d2c9d51b10d54fe335be6064835585dd753d4",
-                "reference": "304d2c9d51b10d54fe335be6064835585dd753d4",
+                "url": "https://api.github.com/repos/tohenk/php-ntjs/zipball/f002047d44a457e8960a6f70054da76dbab3edbc",
+                "reference": "f002047d44a457e8960a6f70054da76dbab3edbc",
                 "shasum": ""
             },
             "require": {
-                "php": ">=7.1"
+                "php": ">=7.4"
             },
             "require-dev": {
                 "phpunit/phpunit": "^9.5"
             },
             "type": "library",
             "extra": {
-                "script-resolvers": {
-                    "NTLAB\\JS\\Script": "NTLAB\\JS\\DependencyResolver"
-                },
                 "repository-initializers": {
-                    "jquery": "NTLAB\\JS\\Repository\\JQuery"
+                    "default": "NTLAB\\JS\\Initializer\\Fallback"
                 }
             },
             "autoload": {
@@ -185,7 +182,7 @@
                     "role": "Developer"
                 }
             ],
-            "description": "PHP Javascript Repository",
+            "description": "PHP-NTJS Javascript Repository",
             "homepage": "https://github.com/tohenk/php-ntjs",
             "keywords": [
                 "javascript",
@@ -194,22 +191,82 @@
             ],
             "support": {
                 "issues": "https://github.com/tohenk/php-ntjs/issues",
-                "source": "https://github.com/tohenk/php-ntjs/tree/v3.3.1"
+                "source": "https://github.com/tohenk/php-ntjs/tree/v4.0.0"
             },
-            "time": "2024-06-03T03:32:42+00:00"
+            "time": "2025-01-31T10:53:14+00:00"
         },
         {
-            "name": "psr/log",
-            "version": "3.0.0",
+            "name": "ntlab/ntjs-repo",
+            "version": "v4.0.0",
             "source": {
                 "type": "git",
-                "url": "https://github.com/php-fig/log.git",
-                "reference": "fe5ea303b0887d5caefd3d431c3e61ad47037001"
+                "url": "https://github.com/tohenk/php-ntjs-repo.git",
+                "reference": "92b3ea82cbf20e6fc76c20b2e7a8f03b52033da2"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/php-fig/log/zipball/fe5ea303b0887d5caefd3d431c3e61ad47037001",
-                "reference": "fe5ea303b0887d5caefd3d431c3e61ad47037001",
+                "url": "https://api.github.com/repos/tohenk/php-ntjs-repo/zipball/92b3ea82cbf20e6fc76c20b2e7a8f03b52033da2",
+                "reference": "92b3ea82cbf20e6fc76c20b2e7a8f03b52033da2",
+                "shasum": ""
+            },
+            "require": {
+                "ntlab/ntjs": "^4.0",
+                "php": ">=7.4"
+            },
+            "require-dev": {
+                "phpunit/phpunit": "^9.5"
+            },
+            "type": "library",
+            "extra": {
+                "script-resolvers": {
+                    "NTLAB\\JS\\Repo\\Script": "NTLAB\\JS\\DependencyResolver"
+                },
+                "repository-initializers": {
+                    "jquery": "NTLAB\\JS\\Repo\\Initializer\\JQuery"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "NTLAB\\JS\\Repo\\": "src/",
+                    "NTLAB\\JS\\Repo\\Test\\": "tests/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Toha",
+                    "email": "tohenk@yahoo.com",
+                    "role": "Developer"
+                }
+            ],
+            "description": "PHP-NTJS Script Repository",
+            "homepage": "https://github.com/tohenk/php-ntjs-repo",
+            "keywords": [
+                "javascript",
+                "ntjs",
+                "repository"
+            ],
+            "support": {
+                "issues": "https://github.com/tohenk/php-ntjs-repo/issues",
+                "source": "https://github.com/tohenk/php-ntjs-repo/tree/v4.0.0"
+            },
+            "time": "2025-01-31T11:54:10+00:00"
+        },
+        {
+            "name": "psr/log",
+            "version": "3.0.2",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/php-fig/log.git",
+                "reference": "f16e1d5863e37f8d8c2a01719f5b34baa2b714d3"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/php-fig/log/zipball/f16e1d5863e37f8d8c2a01719f5b34baa2b714d3",
+                "reference": "f16e1d5863e37f8d8c2a01719f5b34baa2b714d3",
                 "shasum": ""
             },
             "require": {
@@ -244,18 +301,18 @@
                 "psr-3"
             ],
             "support": {
-                "source": "https://github.com/php-fig/log/tree/3.0.0"
+                "source": "https://github.com/php-fig/log/tree/3.0.2"
             },
-            "time": "2021-07-14T16:46:02+00:00"
+            "time": "2024-09-11T13:17:53+00:00"
         }
     ],
     "packages-dev": [],
     "aliases": [],
     "minimum-stability": "stable",
-    "stability-flags": [],
+    "stability-flags": {},
     "prefer-stable": false,
     "prefer-lowest": false,
-    "platform": [],
-    "platform-dev": [],
+    "platform": {},
+    "platform-dev": {},
     "plugin-api-version": "2.6.0"
 }
